@@ -56,8 +56,33 @@ Each line represents a "beat" or "event" in a specific measure.
 *   **`M1:1`**: Measure 1, Beat 1.
 *   **`M1:1.5`**: Measure 1, Beat 1.5 (the "and" of beat 1).
 *   **`E:0 A:2 D:2`**: Play fret 0 on Low E, fret 2 on A, and fret 2 on D (an E5 power chord).
+*   **`E:x`**: A "dead" or muted note (renders as `x`).
 *   **`OVER G`**: (Optional) Triggers the music theory engine to analyze the chord relative to 'G' and stack the chord name (e.g., *G Major [1-3-5]*) above the tab. *Note: Chord analysis is only displayed if an OVER hint is provided.*
-*   **`# [Intro]`**: (Optional) Adds a text cue/comment stacked above the tab.
+*   **`# [PM]`**: (Optional) Adds a text cue/comment stacked above the tab.
+
+### Sections & Measure Filling
+You can group your tabs into named sections. Gaps between measures are automatically filled with empty bars, but **only within the same section**. This prevents large blocks of empty space between a verse and a chorus.
+
+```text
+# [Intro]
+M1:1 | E:0 # [Let ring]
+
+# [Chorus]
+M10:1 | E:0 A:2 D:2 OVER E
+M12:1 | A:3 D:5 G:5 OVER C
+```
+*In the example above, M11 will be rendered as an empty bar, but M2-M9 will be skipped.*
+
+### Cue Range Brackets
+If you use the same cue on consecutive beats, Tabbit automatically draws a range bracket to keep the view clean:
+
+```text
+M1:1 | E:0 # [PM]
+M1:2 | E:0 # [PM]
+M1:3 | E:0 # [PM]
+```
+**Renders as:**
+`[PM]---------|`
 
 ### Sub-beats (Off-beats)
 To play something between beats (e.g., "1 and 2 and"), use decimal increments:
@@ -95,7 +120,8 @@ M3:3 | e:12b14
 When using `tab_live.py`:
 *   **Synchronized Scrolling**: If your tab gets wider than your terminal window, the view will automatically scroll horizontally. Cues, chords, strings, and beats all move as a single synchronized unit without breaking mid-measure.
 *   **Real-time Analysis**: It identifies chords and detects inversions when `OVER` is used.
-*   **Theory Tips**: Suggests embellishments (e.g., "Try a 'sus2' for a jangly feel") at the bottom of the screen.
+*   **Theory Tips**: Suggests embellishments (e.g., "Try a 'sus2' for a jangly feel") at the bottom of the screen. (Can be disabled with `--no-tips`).
+*   **Auto-Formatting**: Automatically aligns your `.tabbit` file into clean columns when using the `--auto-fmt` flag.
 *   **Auto-Refresh**: Save your `.tabbit` file, and the terminal view updates instantly.
 
 ---
@@ -104,9 +130,9 @@ When using `tab_live.py`:
 To compose tabs in real-time with "Hot Reload" functionality:
 
 1.  **Prepare a Shorthand File**: Create a file (e.g., `composition.tabbit` or `my_song.tabbit`).
-2.  **Start the Watcher**: In your terminal, run the watcher and pass it your filename:
+2.  **Start the Watcher**: In your terminal, run the watcher and pass it your filename along with any optional flags:
     ```bash
-    python3 tab_live.py my_song.tabbit
+    python3 tab_live.py my_song.tabbit [--auto-fmt] [--no-tips]
     ```
     *(If no filename is provided, it defaults to `composition.tabbit`)*
 3.  **Edit and Save**: Keep the terminal visible and open your `.tabbit` file in your code editor. Every time you **Save (Ctrl+S)**, the terminal will cleanly refresh with the rendered ASCII tab, aligned cues, and chord analysis.
