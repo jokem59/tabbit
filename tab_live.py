@@ -88,64 +88,43 @@ def run_compiler(watch_file):
             f.write("M1:1 | E:0 A:2 D:2 G:1 B:0 e:0 OVER E # [Intro]\n")
         return
 
-    # Look for a TS header
-    current_ts = DEFAULT_TS
     with open(watch_file, "r") as f:
-        lines = f.readlines()
-        for line in lines:
-            if line.startswith("TS "):
-                try:
-                    num, den = line.strip().split()[1].split('/')
-                    current_ts = (int(num), int(den))
-                except: pass
+        content = f.read()
 
-    compiler = TabCompiler(time_sig=current_ts)
+    compiler = TabCompiler()
     parsing_errors = []
-    for line in lines:
-        stripped = line.strip()
-        if not stripped or stripped.startswith("TS"):
-            continue
-        
-        # Only skip comments that AREN'T section headers
-        if stripped.startswith("#") and not stripped.startswith("# ["):
-            continue
-
-        try:
-            compiler.parse_line(stripped)
-        except Exception as e:
-            parsing_errors.append(f"❌ Error parsing line: {stripped}\n    -> {e}")
+    
+    try:
+        compiler.compile_text(content)
+    except Exception as e:
+        parsing_errors.append(f"❌ Compilation Error: {e}")
+        import traceback
+        parsing_errors.append(traceback.format_exc())
 
     # Compile the full output
     show_tips = "--no-tips" not in sys.argv
-    full_output = compiler.compile(measures_per_line=4, show_tips=show_tips)
+    full_output = compiler.render(measures_per_line=4, show_tips=show_tips)
+    
+    if not compiler.measures and not parsing_errors:
+        parsing_errors.append("⚠️ No measures were detected in the file. Check your syntax (e.g., M1:1 | ...)")
+
     term_w = get_terminal_width()
-    
-    # Process chunks separately for synchronized wrapping
-    final_lines = []
-    raw_chunks = full_output.split('\n\n---') # Split by measure group
-    
-    for i, raw_chunk in enumerate(raw_chunks):
-        if not raw_chunk.strip(): continue
-        chunk_lines = raw_chunk.split('\n')
-        # Re-add the header separator if it was split
-        if i > 0: chunk_lines[0] = "---" + chunk_lines[0]
-        
-        final_lines.extend(process_chunk(chunk_lines, term_w))
-        final_lines.append("") # Spacer between chunks
 
     # If there were errors, show them at the bottom
+    final_output = full_output
     if parsing_errors:
-        final_lines.append("-" * term_w)
-        final_lines.extend(parsing_errors)
+        final_output += "\n" + "-" * term_w + "\n"
+        final_output += "\n".join(parsing_errors)
 
     clear_screen()
-    print(f"🎸 Tabbit Live Composer | Watching: {watch_file} | TS: {current_ts[0]}/{current_ts[1]} | Width: {term_w}")
+    print(f"🎸 Tabbit Live Composer | Watching: {watch_file} | TS: {compiler.ts_num}/{compiler.ts_den} | Width: {term_w}")
     if "--auto-fmt" in sys.argv: print("✨ Auto-Formatting: ON")
     if not show_tips: print("🔇 Tips: OFF")
     print("-" * term_w)
-    print("\n".join(final_lines))
+    print(final_output)
     print("\n" + "=" * term_w)
     print("Waiting for changes... (Save your file to refresh)")
+
 
 if __name__ == "__main__":
     # Get filename from command line or use default, ignoring flags

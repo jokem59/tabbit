@@ -20,7 +20,8 @@ Tabbit is a guitar tab toolkit featuring:
 - **Time Signature**: Currently focusing on **6/4** and **6/8** time.
 - **Key Context**: Working on a riff originally in **Key of A (D chord context)**, often transposing **+3 semitones** to the **Key of C (F chord context)**.
 - **Project Structure**:
-    - `tab_compiler.py`: Core logic for rendering shorthand, spacing, and chord analysis.
-    - `tab_live.py`: Terminal-aware file watcher and auto-scroller for `.tabbit` files.
+    - `tab_compiler.py`: Logic for rendering shorthand (Lexer/Parser/Emitter).
+    - `tab_live.py`: Terminal-aware file watcher for `.tabbit` files.
+    - `tabbit_fmt.py`: Auto-formatter for shorthand syntax.
     - `NOTATION.md`: User-facing documentation for syntax.
     - `render_output.py`: Testing script for rendering shorthand.

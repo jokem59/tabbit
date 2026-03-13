@@ -99,6 +99,30 @@ M1:1.75 | E:0 # [Beat 1 a]
 ```
 **Greedy Resolution:** Tabbit uses smart spacing. If any sub-beat is detected in a measure, the compiler will automatically expand the output grid *for that measure only* to match its smallest subdivision, keeping simple measures compact.
 
+### Macros (Variables)
+You can define reusable riffs using the `=` syntax. Macros must be defined before use.
+
+```text
+MAIN_RIFF = {
+    M1:1 | E:0 A:2 D:2 # [E5]
+    M1:3 | E:3
+}
+
+# Play the riff
+MAIN_RIFF
+```
+
+### Repeat Blocks
+Use `REPEAT` to loop a section. The compiler automatically handles measure offsets for you.
+
+```text
+REPEAT 4 {
+    M1:1 | G:7 B:8
+    M1:3 | G:9 B:10
+}
+```
+In the example above, the block will be rendered across 4 measures (M1, M2, M3, M4).
+
 ### Examples
 
 **A Simple Chord Progression:**
