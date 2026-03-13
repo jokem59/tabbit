@@ -1,0 +1,23 @@
+# Node.js
+node_modules/
+package-lock.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+ENV/
+
+# Tabbit / Demucs Outputs
+separated/
+temp_audio.wav
+temp_audio.mp3
+temp_audio.m4a
+
+# IDEs
+.vscode/
+.idea/
+.DS_Store
