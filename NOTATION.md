@@ -56,13 +56,13 @@ Each line represents a "beat" or "event" in a specific measure.
 *   **`M1:1`**: Measure 1, Beat 1.
 *   **`M1:1.5`**: Measure 1, Beat 1.5 (the "and" of beat 1).
 *   **`E:0 A:2 D:2`**: Play fret 0 on Low E, fret 2 on A, and fret 2 on D (an E5 power chord).
-*   **`OVER G`**: (Optional) Tells the engine to analyze the chord relative to 'G'.
-*   **`# [Intro]`**: (Optional) Adds a text cue/comment above the tab.
+*   **`OVER G`**: (Optional) Triggers the music theory engine to analyze the chord relative to 'G' and stack the chord name (e.g., *G Major [1-3-5]*) above the tab. *Note: Chord analysis is only displayed if an OVER hint is provided.*
+*   **`# [Intro]`**: (Optional) Adds a text cue/comment stacked above the tab.
 
 ### Sub-beats (Off-beats)
 To play something between beats (e.g., "1 and 2 and"), use decimal increments:
 
-*   **8th notes (`.5`)**: `1.5`, `2.5`...
+*   **8th notes (`.5`)**: `1.5`, `2.5`... (Outputs as `1 & 2 &`)
 *   **16th notes (`.25`)**: `1.25` (1-e), `1.5` (1-&), `1.75` (1-a).
 *   **32nd notes (`.125`)**: `1.125`, `1.375`...
 
@@ -72,7 +72,7 @@ M1:1.25 | E:0 # [Beat 1 e]
 M1:1.5  | E:0 # [Beat 1 &]
 M1:1.75 | E:0 # [Beat 1 a]
 ```
-If any sub-beat is detected in a measure, the compiler will automatically expand the output grid to match the smallest subdivision used in that measure.
+**Greedy Resolution:** Tabbit uses smart spacing. If any sub-beat is detected in a measure, the compiler will automatically expand the output grid *for that measure only* to match its smallest subdivision, keeping simple measures compact.
 
 ### Examples
 
@@ -93,6 +93,23 @@ M3:3 | e:12b14
 
 ### Live Composer Features
 When using `tab_live.py`:
-*   **Real-time Analysis**: It identifies chords (e.g., "G Major [1-3-5]") and detects inversions.
-*   **Theory Tips**: Suggests embellishments (e.g., "Try a 'sus2' for a jangly feel").
+*   **Synchronized Scrolling**: If your tab gets wider than your terminal window, the view will automatically scroll horizontally. Cues, chords, strings, and beats all move as a single synchronized unit without breaking mid-measure.
+*   **Real-time Analysis**: It identifies chords and detects inversions when `OVER` is used.
+*   **Theory Tips**: Suggests embellishments (e.g., "Try a 'sus2' for a jangly feel") at the bottom of the screen.
 *   **Auto-Refresh**: Save your `.tabbit` file, and the terminal view updates instantly.
+
+---
+
+## 3. How to Use Live Mode
+To compose tabs in real-time with "Hot Reload" functionality:
+
+1.  **Prepare a Shorthand File**: Create a file (e.g., `composition.tabbit` or `my_song.tabbit`).
+2.  **Start the Watcher**: In your terminal, run the watcher and pass it your filename:
+    ```bash
+    python3 tab_live.py my_song.tabbit
+    ```
+    *(If no filename is provided, it defaults to `composition.tabbit`)*
+3.  **Edit and Save**: Keep the terminal visible and open your `.tabbit` file in your code editor. Every time you **Save (Ctrl+S)**, the terminal will cleanly refresh with the rendered ASCII tab, aligned cues, and chord analysis.
+
+**Recommended Setup**: Split your screen so your editor is on the left and the terminal running `tab_live.py` is on the right.
+

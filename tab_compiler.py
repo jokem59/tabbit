@@ -97,8 +97,11 @@ class TabCompiler:
             midi_pitches.append(self.string_pitches[s_idx] + fret_num)
             note_events.append({'string': s_idx, 'fret': fret_val})
             
-        theory = MusicTheory.analyze_chord(midi_pitches, root_hint)
-        tip = MusicTheory.suggest_embellishment(midi_pitches, root_hint)
+        theory = ""
+        tip = ""
+        if root_hint:
+            theory = MusicTheory.analyze_chord(midi_pitches, root_hint)
+            tip = MusicTheory.suggest_embellishment(midi_pitches, root_hint)
         
         self.measures[m_num][b_num] = {
             "events": note_events,
@@ -106,6 +109,33 @@ class TabCompiler:
             "theory": theory,
             "tip": tip
         }
+
+    def _place_multiline(self, lines, text, start_col):
+        """Places text in the first available line at start_col without overlapping."""
+        if not text: return
+        
+        for i in range(len(lines)):
+            line = lines[i]
+            # Ensure the line is long enough to check
+            if len(line) <= start_col:
+                lines[i] = line.ljust(start_col) + text
+                return
+            
+            # Check if there's space (all characters at start_col to end of text are spaces)
+            # We check a slightly wider area to ensure a small gap between labels on the same line
+            target_area = line[start_col:start_col + len(text) + 2]
+            if target_area.strip() == "":
+                # Pad if necessary
+                if len(line) < start_col:
+                    lines[i] = line.ljust(start_col) + text
+                else:
+                    # String slice replacement
+                    new_line = line[:start_col] + text + line[start_col + len(text):]
+                    lines[i] = new_line
+                return
+        
+        # If no space found in existing lines, add a new one
+        lines.append(" " * start_col + text)
 
     def compile(self, measures_per_line=4):
         output = []
@@ -118,75 +148,117 @@ class TabCompiler:
             output.append(f"\n--- MEASURES {chunk_indices[0]} - {chunk_indices[-1]} ({self.ts_num}/{self.ts_den}) ---")
             
             # Prepare lines for this chunk
-            chunk_lines = [f"{n} |-" for n in self.string_names]
-            chunk_theory = "    "
-            chunk_cue = "    "
+            chunk_lines = [f"{n} |" for n in self.string_names]
+            chunk_theory_lines = ["   "]
+            chunk_cue_lines = ["   "]
+            chunk_beats = "   "
+            
+            # 1. Determine GLOBAL resolution (step) and GLOBAL max fret width for THIS CHUNK
+            global_step = 1.0
+            global_max_fret_w = 1
+            for m_num in chunk_indices:
+                m_data = self.measures.get(m_num, {})
+                for b, b_data in m_data.items():
+                    frac = round(b % 1, 4)
+                    if frac != 0:
+                        if frac % 0.125 == 0: global_step = min(global_step, 0.125)
+                        elif frac % 0.25 == 0: global_step = min(global_step, 0.25)
+                        elif frac % 0.5 == 0: global_step = min(global_step, 0.5)
+                        else: global_step = min(global_step, 0.0625)
+                    for e in b_data['events']:
+                        global_max_fret_w = max(global_max_fret_w, len(e['fret']))
+            
+            # 2. Determine global_slot_w for even spacing across the chunk
+            global_slot_w = global_max_fret_w + 1
+            if global_step >= 0.5: global_slot_w = max(global_slot_w, 4)
+            elif global_step == 0.25: global_slot_w = max(global_slot_w, 3)
+            else: global_slot_w = max(global_slot_w, 2)
+
+            current_chunk_col = 3
             
             for m_num in chunk_indices:
-                m_data = self.measures[m_num]
+                m_data = self.measures.get(m_num, {})
                 
-                # Determine resolution for THIS measure
+                # 1. Determine resolution (step) greedily
+                def get_resolution(b):
+                    f = round(b % 1, 4)
+                    if f == 0: return 1.0
+                    if f % 0.5 == 0: return 0.5
+                    if f % 0.25 == 0: return 0.25
+                    if f % 0.125 == 0: return 0.125
+                    return 0.0625
+
                 step = 1.0
-                for b in m_data.keys():
-                    frac = b % 1
-                    if frac == 0: continue
-                    if frac % 0.125 == 0: step = min(step, 0.125)
-                    elif frac % 0.25 == 0: step = min(step, 0.25)
-                    elif frac % 0.5 == 0: step = min(step, 0.5)
-                    else: step = min(step, 0.0625)
+                max_fret_w = 1
+                for b, b_data in m_data.items():
+                    step = min(step, get_resolution(b))
+                    for e in b_data['events']:
+                        max_fret_w = max(max_fret_w, len(e['fret']))
+                
+                slot_w = max_fret_w + 1
+                if step >= 0.5: slot_w = max(slot_w, 4)
+                elif step == 0.25: slot_w = max(slot_w, 3)
+                else: slot_w = max(slot_w, 2)
                 
                 num_slots = int(round(self.ts_num / step))
                 beat_sequence = [round(j * step + 1, 4) for j in range(num_slots)]
                 
                 measure_output = ["" for _ in range(6)]
-                m_theory_line = ""
-                m_cue_line = ""
+                m_beat_line = ""
                 
                 for b in beat_sequence:
+                    frac = round(b % 1, 4)
+                    label = ""
+                    if frac == 0: label = str(int(b))
+                    elif frac == 0.5: label = "&"
+                    elif frac == 0.25: label = "e"
+                    elif frac == 0.75: label = "a"
+                    
+                    column = ["-"] * 6
                     if b in m_data:
                         beat_data = m_data[b]
-                        
-                        # Notes
-                        column = ["-"] * 6
                         for e in beat_data['events']:
                             column[e['string']] = e['fret']
                         
-                        max_w = max(len(c) for c in column)
-                        for s_idx in range(6):
-                            measure_output[s_idx] += column[s_idx].ljust(max_w, '-') + "--"
-                        
-                        # Align Theory/Cues to the width of the note column
-                        col_width = max_w + 2
-                        m_theory_line += beat_data['theory'].ljust(col_width)
+                        # Place Theory and Cues into the multi-line storage
+                        self._place_multiline(chunk_theory_lines, beat_data['theory'], current_chunk_col + 2)
                         cue_txt = f"[{beat_data['cue']}]" if beat_data['cue'] else ""
-                        m_cue_line += cue_txt.ljust(col_width)
-                    else:
-                        # Empty slot
-                        fill = "-" * 4
-                        for s_idx in range(6): measure_output[s_idx] += fill
-                        m_theory_line += " " * len(fill)
-                        m_cue_line += " " * len(fill)
-                
-                # Combine this measure into the chunk lines
-                for s_idx in range(6):
-                    chunk_lines[s_idx] += measure_output[s_idx] + "|"
-                
-                # Add measure boundary to theory/cue lines
-                chunk_theory += m_theory_line + " "
-                chunk_cue += m_cue_line + " "
-            
-            output.append(chunk_cue)
-            output.extend(chunk_lines)
-            output.append(chunk_theory)
-            
-            # Collective Tips for the chunk
-            for m_num in chunk_indices:
-                for b in self.measures[m_num]:
-                    if self.measures[m_num][b]['tip']:
-                        output.append(f"   (M{m_num}) {self.measures[m_num][b]['tip']}")
-                        
-        return "\n".join(output)
+                        self._place_multiline(chunk_cue_lines, cue_txt, current_chunk_col + 2)
                     
+                    for s_idx in range(6):
+                        measure_output[s_idx] += column[s_idx].ljust(slot_w, "-")
+                    
+                    m_beat_line += label.ljust(slot_w)
+                
+                for s_idx in range(6):
+                    # Start each measure with '--' padding
+                    chunk_lines[s_idx] += "--" + measure_output[s_idx] + "|"
+                
+                chunk_beats += "  " + m_beat_line + " "
+                
+                # Ensure meta-lines are padded to match the measure boundary
+                measure_w = (num_slots * slot_w) + 3
+                for lines in [chunk_theory_lines, chunk_cue_lines]:
+                    for idx in range(len(lines)):
+                        lines[idx] = lines[idx].ljust(current_chunk_col + measure_w)
+                
+                current_chunk_col += measure_w
+            
+            # Final assembly for this chunk
+            output.extend(chunk_cue_lines)
+            # Only add theory lines if they contain actual text (ignoring initial padding)
+            if any(line.strip() for line in chunk_theory_lines):
+                output.extend(chunk_theory_lines)
+            output.extend(chunk_lines)
+            output.append(chunk_beats)
+            
+            # Tips
+            for m_num in chunk_indices:
+                if m_num in self.measures:
+                    for b in self.measures[m_num]:
+                        if self.measures[m_num][b]['tip']:
+                            output.append(f"   (M{m_num}) {self.measures[m_num][b]['tip']}")
+                        
         return "\n".join(output)
 
 if __name__ == "__main__":
