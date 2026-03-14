@@ -60,7 +60,7 @@ pub fn analyze_chord(notes: &[u8], root_hint: Option<&str>) -> String {
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Voicing {
-    pub assignments: Vec<(String, u8)>, // (StringName, Fret)
+    pub assignments: Vec<(String, u8)>,
 }
 
 pub fn find_voicings(midi_pitches: &[u8]) -> Vec<Voicing> {
@@ -70,7 +70,6 @@ pub fn find_voicings(midi_pitches: &[u8]) -> Vec<Voicing> {
         ("e", 64), ("B", 59), ("G", 55), ("D", 50), ("A", 45), ("E", 40)
     ];
 
-    // 1. Find all possible (string, fret) for each pitch
     let mut options = Vec::new();
     for &pitch in midi_pitches {
         let mut pitch_options = Vec::new();
@@ -85,19 +84,15 @@ pub fn find_voicings(midi_pitches: &[u8]) -> Vec<Voicing> {
         options.push(pitch_options);
     }
 
-    // 2. Cartesian product of all options
     use itertools::Itertools;
     let all_combos = options.into_iter().multi_cartesian_product();
 
-    // 3. Filter
     all_combos.into_iter().filter_map(|combo| {
-        // Must use different strings
         let mut used_strings = std::collections::HashSet::new();
         for (s, _) in &combo {
             if !used_strings.insert(s) { return None; }
         }
 
-        // Fret stretch limit (max 4 frets difference, ignoring open strings)
         let non_zero_frets: Vec<u8> = combo.iter().map(|&(_, f)| f).filter(|&f| f > 0).collect();
         if !non_zero_frets.is_empty() {
             let min_f = *non_zero_frets.iter().min().unwrap();
@@ -107,4 +102,50 @@ pub fn find_voicings(midi_pitches: &[u8]) -> Vec<Voicing> {
 
         Some(Voicing { assignments: combo.into_iter().map(|(s, f)| (s, f)).collect() })
     }).collect()
+}
+
+pub struct MidiPlayer {
+    conn: Option<midir::MidiOutputConnection>,
+    pub port_name: String,
+}
+
+impl MidiPlayer {
+    pub fn new() -> Self {
+        let midi_out = midir::MidiOutput::new("Tabbit Player").ok();
+        let mut port_name = "None".to_string();
+        let conn = midi_out.and_then(|out| {
+            let ports = out.ports();
+            if ports.is_empty() {
+                port_name = "NO MIDI OUT FOUND (Install FluidSynth)".to_string();
+                None
+            } else {
+                // Try to find a synth like FluidSynth or TiMidity first
+                let target_port = ports.iter().find(|p| {
+                    let name = out.port_name(p).unwrap_or_default().to_lowercase();
+                    name.contains("fluid") || name.contains("timidity") || name.contains("synth")
+                }).or(ports.first());
+
+                if let Some(port) = target_port {
+                    port_name = out.port_name(port).unwrap_or_else(|_| "Unknown".to_string());
+                    out.connect(port, "tabbit-out").ok()
+                } else {
+                    None
+                }
+            }
+        });
+
+        Self { conn, port_name }
+    }
+
+    pub fn play_notes(&mut self, midi_pitches: &[u8], duration_ms: u64) {
+        if let Some(ref mut conn) = self.conn {
+            for &pitch in midi_pitches {
+                let _ = conn.send(&[0x90, pitch, 0x64]);
+            }
+            std::thread::sleep(std::time::Duration::from_millis(duration_ms));
+            for &pitch in midi_pitches {
+                let _ = conn.send(&[0x80, pitch, 0x64]);
+            }
+        }
+    }
 }

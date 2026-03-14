@@ -21,7 +21,8 @@ struct Args {
     dump: bool,
 }
 
-fn main() -> anyhow::Result<()> {
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
     let args = Args::parse();
     
     let content = fs::read_to_string(&args.input)?;

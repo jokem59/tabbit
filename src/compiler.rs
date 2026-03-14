@@ -5,6 +5,7 @@ use std::collections::HashMap;
 #[derive(Debug, Clone, Default)]
 pub struct Song {
     pub time_signature: (u32, u32),
+    pub bpm: u32,
     pub measures: HashMap<u32, HashMap<String, BeatData>>,
     pub section_headers: HashMap<u32, String>,
     pub max_measure: u32,
@@ -45,6 +46,7 @@ impl Compiler {
     pub fn compile(&mut self, commands: &[TabbitCommand]) -> Song {
         let mut song = Song {
             time_signature: (4, 4),
+            bpm: 120,
             measures: HashMap::new(),
             section_headers: HashMap::new(),
             max_measure: 0,
@@ -56,6 +58,9 @@ impl Compiler {
     fn process_commands(&mut self, commands: &[TabbitCommand], song: &mut Song) {
         for cmd in commands {
             match cmd {
+                TabbitCommand::Bpm(val) => {
+                    song.bpm = *val;
+                }
                 TabbitCommand::SectionHeader(title) => {
                     self.current_section = Some(title.clone());
                 }

@@ -11,6 +11,7 @@ use nom::{
 #[derive(Debug, Clone)]
 pub enum TabbitCommand {
     TimeSignature(u32, u32),
+    Bpm(u32),
     MeasureEvent {
         measure: u32,
         beat: f32,
@@ -142,9 +143,17 @@ fn parse_comment(input: &str) -> IResult<&str, ()> {
     Ok((input, ()))
 }
 
+fn parse_bpm(input: &str) -> IResult<&str, TabbitCommand> {
+    let (input, _) = tag("BPM")(input)?;
+    let (input, _) = space1(input)?;
+    let (input, bpm) = parse_u32(input)?;
+    Ok((input, TabbitCommand::Bpm(bpm)))
+}
+
 fn parse_command(input: &str) -> IResult<&str, TabbitCommand> {
     alt((
         parse_ts,
+        parse_bpm,
         parse_measure_event,
         parse_repeat,
         parse_macro_define,
