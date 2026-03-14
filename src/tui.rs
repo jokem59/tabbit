@@ -610,19 +610,3 @@ impl TuiApp {
         }
     }
 }
-
-trait Ljust { fn ljust(&self, width: usize) -> String; }
-impl Ljust for String {
-    fn ljust(&self, width: usize) -> String {
-        let mut s = self.clone();
-        while s.chars().count() < width { s.push(' '); }
-        s
-    }
-}
-impl Ljust for &str {
-    fn ljust(&self, width: usize) -> String {
-        let mut s = self.to_string();
-        while s.chars().count() < width { s.push(' '); }
-        s
-    }
-}
