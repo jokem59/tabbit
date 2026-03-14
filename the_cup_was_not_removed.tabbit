@@ -15,26 +15,14 @@ M18:1 | B:10 G:7  D:7  OVER D
 M18:2 | B:10 G:7  D:7  OVER D
 M18:3 | B:10 G:7  D:7  OVER D
 M18:4 | B:10 G:7  D:7  OVER D
-M19:1 | B:10 G:9  D:7  OVER A
+M19:1 | B:10 G:7  D:7  OVER D
+M19:2 | B:10 G:7  D:7  OVER D
+M19:3 | B:10 G:7  D:7  OVER D
+M19:4 | B:10 G:7  D:7  OVER D
 M20:1 | B:10 G:9  D:7  OVER A
+M21:1 | B:10 G:9  D:7  OVER A
 
 # [Verse 2]
-M21:1    | D:7  OVER A  # [PM]
-M21:1.25 | D:7  OVER A  # [PM]
-M21:1.5  | D:7  OVER A  # [PM]
-M21:1.75 | D:7  OVER A  # [PM]
-M21:2    | D:7  OVER A  # [PM]
-M21:2.25 | D:7  OVER A  # [PM]
-M21:2.5  | D:7  OVER A  # [PM]
-M21:2.75 | D:7  OVER A  # [PM]
-M21:3    | D:7  OVER A  # [PM]
-M21:3.25 | D:7  OVER A  # [PM]
-M21:3.5  | D:7  OVER A  # [PM]
-M21:3.75 | D:7  OVER A  # [PM]
-M21:4    | D:7  OVER A  # [PM]
-M21:4.25 | D:7  OVER A  # [PM]
-M21:4.5  | D:7  OVER A  # [PM]
-M21:4.75 | D:7  OVER A  # [PM]
 M22:1    | D:7  OVER A  # [PM]
 M22:1.25 | D:7  OVER A  # [PM]
 M22:1.5  | D:7  OVER A  # [PM]
@@ -51,22 +39,22 @@ M22:4    | D:7  OVER A  # [PM]
 M22:4.25 | D:7  OVER A  # [PM]
 M22:4.5  | D:7  OVER A  # [PM]
 M22:4.75 | D:7  OVER A  # [PM]
-M23:1    | D:0  OVER D  # [PM]
-M23:1.25 | D:0  OVER D  # [PM]
-M23:1.5  | D:0  OVER D  # [PM]
-M23:1.75 | D:0  OVER D  # [PM]
-M23:2    | D:0  OVER D  # [PM]
-M23:2.25 | D:0  OVER D  # [PM]
-M23:2.5  | D:0  OVER D  # [PM]
-M23:2.75 | D:0  OVER D  # [PM]
-M23:3    | D:0  OVER D  # [PM]
-M23:3.25 | D:0  OVER D  # [PM]
-M23:3.5  | D:0  OVER D  # [PM]
-M23:3.75 | D:0  OVER D  # [PM]
-M23:4    | D:0  OVER D  # [PM]
-M23:4.25 | D:0  OVER D  # [PM]
-M23:4.5  | D:0  OVER D  # [PM]
-M23:4.75 | D:0  OVER D  # [PM]
+M23:1    | D:7  OVER A  # [PM]
+M23:1.25 | D:7  OVER A  # [PM]
+M23:1.5  | D:7  OVER A  # [PM]
+M23:1.75 | D:7  OVER A  # [PM]
+M23:2    | D:7  OVER A  # [PM]
+M23:2.25 | D:7  OVER A  # [PM]
+M23:2.5  | D:7  OVER A  # [PM]
+M23:2.75 | D:7  OVER A  # [PM]
+M23:3    | D:7  OVER A  # [PM]
+M23:3.25 | D:7  OVER A  # [PM]
+M23:3.5  | D:7  OVER A  # [PM]
+M23:3.75 | D:7  OVER A  # [PM]
+M23:4    | D:7  OVER A  # [PM]
+M23:4.25 | D:7  OVER A  # [PM]
+M23:4.5  | D:7  OVER A  # [PM]
+M23:4.75 | D:7  OVER A  # [PM]
 M24:1    | D:0  OVER D  # [PM]
 M24:1.25 | D:0  OVER D  # [PM]
 M24:1.5  | D:0  OVER D  # [PM]
@@ -83,40 +71,104 @@ M24:4    | D:0  OVER D  # [PM]
 M24:4.25 | D:0  OVER D  # [PM]
 M24:4.5  | D:0  OVER D  # [PM]
 M24:4.75 | D:0  OVER D  # [PM]
-M25:1    | D:9  OVER F# # [PM]
-M25:1.25 | D:9  OVER F# # [PM]
-M25:1.5  | D:9  OVER F# # [PM]
-M25:1.75 | D:9  OVER F# # [PM]
-M25:2    | D:9  OVER F# # [PM]
-M25:2.25 | D:9  OVER F# # [PM]
-M25:2.5  | D:9  OVER F# # [PM]
-M25:2.75 | D:9  OVER F# # [PM]
-M25:3    | D:11 OVER G# # [PM]
-M25:3.25 | D:11 OVER G# # [PM]
-M25:3.5  | D:11 OVER G# # [PM]
-M25:3.75 | D:11 OVER G# # [PM]
-M25:4    | D:11 OVER G# # [PM]
-M25:4.25 | D:11 OVER G# # [PM]
-M25:4.5  | D:11 OVER G# # [PM]
-M25:4.75 | D:11 OVER G# # [PM]
+M25:1    | D:0  OVER D  # [PM]
+M25:1.25 | D:0  OVER D  # [PM]
+M25:1.5  | D:0  OVER D  # [PM]
+M25:1.75 | D:0  OVER D  # [PM]
+M25:2    | D:0  OVER D  # [PM]
+M25:2.25 | D:0  OVER D  # [PM]
+M25:2.5  | D:0  OVER D  # [PM]
+M25:2.75 | D:0  OVER D  # [PM]
+M25:3    | D:0  OVER D  # [PM]
+M25:3.25 | D:0  OVER D  # [PM]
+M25:3.5  | D:0  OVER D  # [PM]
+M25:3.75 | D:0  OVER D  # [PM]
+M25:4    | D:0  OVER D  # [PM]
+M25:4.25 | D:0  OVER D  # [PM]
+M25:4.5  | D:0  OVER D  # [PM]
+M25:4.75 | D:0  OVER D  # [PM]
+M26:1    | D:9  OVER F# # [PM]
+M26:1.25 | D:9  OVER F# # [PM]
+M26:1.5  | D:9  OVER F# # [PM]
+M26:1.75 | D:9  OVER F# # [PM]
+M26:2    | D:9  OVER F# # [PM]
+M26:2.25 | D:9  OVER F# # [PM]
+M26:2.5  | D:9  OVER F# # [PM]
+M26:2.75 | D:9  OVER F# # [PM]
+M26:3    | D:11 OVER G# # [PM]
+M26:3.25 | D:11 OVER G# # [PM]
+M26:3.5  | D:11 OVER G# # [PM]
+M26:3.75 | D:11 OVER G# # [PM]
+M26:4    | D:11 OVER G# # [PM]
+M26:4.25 | D:11 OVER G# # [PM]
+M26:4.5  | D:11 OVER G# # [PM]
+M26:4.75 | D:11 OVER G# # [PM]
+M27:1    | D:7  OVER A # [PM]
+M27:1.25 | D:7  OVER A # [PM]
+M27:1.5  | D:7  OVER A # [PM]
+M27:1.75 | D:7  OVER A # [PM]
+M27:2    | A:7  OVER E # [PM]
+M27:2.25 | A:7  OVER E # [PM]
+M27:2.5  | A:7  OVER E # [PM]
+M27:2.75 | A:7  OVER E # [PM]
+M27:3    | D:0 OVER D # [PM]
+M27:3.25 | D:0 OVER D # [PM]
+M27:3.5  | D:0 OVER D # [PM]
+M27:3.75 | D:0 OVER D # [PM]
+M27:4    | D:0 OVER D # [PM]
+M27:4.25 | D:0 OVER D # [PM]
+M27:4.5  | D:0 OVER D # [PM]
+M27:4.75 | D:0 OVER D # [PM]
+M28:1    | D:7  OVER D # [PM]
+M28:1.25 | D:7  OVER D # [PM]
+M28:1.5  | D:7  OVER D # [PM]
+M28:1.75 | D:7  OVER D # [PM]
+M28:2    | D:7  OVER D # [PM]
+M28:2.25 | D:7  OVER D # [PM]
+M28:2.5  | D:7  OVER D # [PM]
+M28:2.75 | D:7  OVER D # [PM]
+M28:3    | A:7 OVER E # [PM]
+M28:3.25 | A:7 OVER E # [PM]
+M28:3.5  | A:7 OVER E # [PM]
+M28:3.75 | A:7 OVER E # [PM]
+M28:4    | A:7 OVER E # [PM]
+M28:4.25 | A:7 OVER E # [PM]
+M28:4.5  | A:7 OVER E # [PM]
+M28:4.75 | A:7 OVER E # [PM]
+M29:1    | D:0 OVER A # [PM]
+M29:1.25 | D:0 OVER A # [PM]
+M29:1.5  | D:0 OVER A # [PM]
+M29:1.75 | D:0 OVER A # [PM]
+M29:2    | D:0 OVER A # [PM]
+M29:2.25 | D:0 OVER A # [PM]
+M29:2.5  | D:0 OVER A # [PM]
+M29:2.75 | D:0 OVER A # [PM]
+M29:3    | D:0 OVER A # [PM]
+M29:3.25 | D:0 OVER A # [PM]
+M29:3.5  | D:0 OVER A # [PM]
+M29:3.75 | D:0 OVER A # [PM]
+M29:4    | D:0 OVER A # [PM]
+M29:4.25 | D:0 OVER A # [PM]
+M29:4.5  | D:0 OVER A # [PM]
+M29:4.75 | D:0 OVER A # [PM]
 
 # [Chorus 2: Single strums and let it ring]
 
-M26:1 | B:10 G:9  D:7  OVER A
-M27:1 | B:10 G:9  D:7  OVER A
-M27:1 | B:10 G:11 D:11 OVER F#m
-M28:1 | B:10 G:11 D:11 OVER F#m
-M29:1 | B:10 G:7  D:7  OVER D
-M30:1 | B:10 G:7  D:7  OVER D
-M31:1 | e:12h  OVER A
-M31:1.25 | e:14p
-M31:1.5 | e:12
-M31:1.75 | B:14
-M32:1 | B:12
-M32:1.5 | e:12
-M33:1 | e:12h  OVER A
-M33:1.25 | e:14p
-M33:1.5 | e:12
-M33:1.75 | B:14
-M34:1 | B:12
-M34:1.5 | e:12
+M30:1 | B:10 G:9  D:7  OVER A
+M31:1 | B:10 G:9  D:7  OVER A
+M32:1 | B:10 G:11 D:11 OVER F#m
+M33:1 | B:10 G:11 D:11 OVER F#m
+M34:1 | B:10 G:7  D:7  OVER D
+M35:1 | B:10 G:7  D:7  OVER D
+M36:1 | e:12h  OVER A
+M36:1.25 | e:14p
+M36:1.5 | e:12
+M36:1.75 | B:14
+M36:4 | B:12
+M36:4.5 | e:12
+M37:1 | e:12h  OVER A
+M37:1.25 | e:14p
+M37:1.5 | e:12
+M37:1.75 | B:14
+M37:4 | B:12
+M37:4.5 | e:12
