@@ -72,7 +72,7 @@ impl Compiler {
                     song.max_measure = song.max_measure.max(m_num);
                     
                     if let Some(section) = self.current_section.take() {
-                        song.section_headers.insert(m_num, section);
+                        song.section_headers.entry(m_num).or_insert(section);
                     }
                     
                     let midi_pitches: Vec<u8> = notes.iter().filter_map(|n| {

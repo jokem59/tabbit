@@ -99,3 +99,24 @@ M25:4    | D:11 OVER G# # [PM]
 M25:4.25 | D:11 OVER G# # [PM]
 M25:4.5  | D:11 OVER G# # [PM]
 M25:4.75 | D:11 OVER G# # [PM]
+
+# [Chorus 2: Single strums and let it ring]
+
+M26:1 | B:10 G:9  D:7  OVER A
+M27:1 | B:10 G:9  D:7  OVER A
+M27:1 | B:10 G:11 D:11 OVER F#m
+M28:1 | B:10 G:11 D:11 OVER F#m
+M29:1 | B:10 G:7  D:7  OVER D
+M30:1 | B:10 G:7  D:7  OVER D
+M31:1 | e:12h  OVER A
+M31:1.25 | e:14p
+M31:1.5 | e:12
+M31:1.75 | B:14
+M32:1 | B:12
+M32:1.5 | e:12
+M33:1 | e:12h  OVER A
+M33:1.25 | e:14p
+M33:1.5 | e:12
+M33:1.75 | B:14
+M34:1 | B:12
+M34:1.5 | e:12

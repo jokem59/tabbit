@@ -110,7 +110,7 @@ impl TuiApp {
         }
 
         let num_slots = (song_guard.time_signature.0 as f32 / step).round() as u32;
-        let beat_sequence: Vec<f32> = (0..num_slots).map(|i| (i as f32 * step + 1.0)).collect();
+        let beat_sequence: Vec<f32> = (0..num_slots).map(|i| i as f32 * step + 1.0).collect();
 
         for b in beat_sequence {
             let b_str = b.to_string();
@@ -136,10 +136,16 @@ impl TuiApp {
         
         while current_m <= song.max_measure {
             let mut end_m = current_m;
-            let mut current_w = 4;
+            let mut current_w = 4; // "e  |"
             
             for m in current_m..=(current_m + 3).min(song.max_measure) {
+                // ALWAYS START A NEW LINE FOR A NEW SECTION
+                if m > current_m && song.section_headers.contains_key(&m) {
+                    break;
+                }
+
                 let m_w = self.calculate_measure_width(m);
+                // Ensure at least one measure is included even if it overflows
                 if m > current_m && current_w + m_w + 1 > view_w {
                     break;
                 }
@@ -147,12 +153,14 @@ impl TuiApp {
                 end_m = m;
             }
             
+            // Check if this range has any notes or the cursor or headers
             let mut has_notes = false;
             let cursor_m = self.get_cursor_measure();
             for m in current_m..=end_m {
                 if let Some(m_data) = song.measures.get(&m) {
                     if !m_data.is_empty() { has_notes = true; break; }
                 }
+                if song.section_headers.contains_key(&m) { has_notes = true; break; }
             }
             let cursor_in = cursor_m >= current_m && cursor_m <= end_m;
             
@@ -398,7 +406,7 @@ impl TuiApp {
         f.render_widget(help, chunks[2]);
     }
 
-    fn render_tab_lines_full(&self, styled: bool, view_w: usize, _view_h: usize) -> (Vec<Line>, (usize, usize)) {
+    fn render_tab_lines_full(&self, styled: bool, view_w: usize, _view_h: usize) -> (Vec<Line<'_>>, (usize, usize)) {
         let mut all_lines = Vec::new();
         let mut cursor_pos = (0, 0);
         let string_names = ["e", "B", "G", "D", "A", "E"];
@@ -416,12 +424,10 @@ impl TuiApp {
                 Span::styled(" ---", Style::default().fg(FG_LIGHT))
             ]));
 
-            let mut unique_headers = Vec::new();
             for m_num in chunk_m_start..=chunk_m_end {
                 if let Some(title) = song.section_headers.get(&m_num) {
                     let is_perf = performance_markers.iter().any(|&m| title.to_uppercase().contains(m));
-                    if !is_perf && !unique_headers.contains(title) {
-                        unique_headers.push(title.clone());
+                    if !is_perf {
                         all_lines.push(Line::from(Span::styled(format!(" # [{}]", title), Style::default().fg(SECTION_CYAN).add_modifier(Modifier::BOLD))));
                     }
                 }
@@ -456,7 +462,7 @@ impl TuiApp {
                 }
 
                 let num_slots = (song.time_signature.0 as f32 / step).round() as u32;
-                let beat_sequence: Vec<f32> = (0..num_slots).map(|i| (i as f32 * step + 1.0)).collect();
+                let beat_sequence: Vec<f32> = (0..num_slots).map(|i| i as f32 * step + 1.0).collect();
 
                 for b in beat_sequence {
                     let b_str = b.to_string();
@@ -477,7 +483,9 @@ impl TuiApp {
                     col_w += 1;
 
                     if is_cursor_row && m_num == cursor_m && (b - cursor_b).abs() < (step / 2.0) {
-                        cursor_pos = (string_raw[0].chars().count() - 4, all_lines.len()); 
+                        let current_col_pos = string_raw[0].chars().count();
+                        let h_off = if is_cursor_row { self.horizontal_scroll } else { 0 };
+                        cursor_pos = (current_col_pos.saturating_sub(4 + h_off), all_lines.len()); 
                     }
 
                     if let Some(bd) = bd_opt {

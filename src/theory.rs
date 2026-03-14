@@ -105,39 +105,48 @@ pub fn find_voicings(midi_pitches: &[u8]) -> Vec<Voicing> {
 }
 
 pub struct MidiPlayer {
+    #[cfg(feature = "midi")]
     conn: Option<midir::MidiOutputConnection>,
     pub port_name: String,
 }
 
 impl MidiPlayer {
     pub fn new() -> Self {
-        let midi_out = midir::MidiOutput::new("Tabbit Player").ok();
-        let mut port_name = "None".to_string();
-        let conn = midi_out.and_then(|out| {
-            let ports = out.ports();
-            if ports.is_empty() {
-                port_name = "NO MIDI OUT FOUND (Install FluidSynth)".to_string();
-                None
-            } else {
-                // Try to find a synth like FluidSynth or TiMidity first
-                let target_port = ports.iter().find(|p| {
-                    let name = out.port_name(p).unwrap_or_default().to_lowercase();
-                    name.contains("fluid") || name.contains("timidity") || name.contains("synth")
-                }).or(ports.first());
-
-                if let Some(port) = target_port {
-                    port_name = out.port_name(port).unwrap_or_else(|_| "Unknown".to_string());
-                    out.connect(port, "tabbit-out").ok()
-                } else {
+        #[cfg(feature = "midi")]
+        {
+            let midi_out = midir::MidiOutput::new("Tabbit Player").ok();
+            let mut port_name = "None".to_string();
+            let conn = midi_out.and_then(|out| {
+                let ports = out.ports();
+                if ports.is_empty() {
+                    port_name = "NO MIDI OUT FOUND (Install FluidSynth)".to_string();
                     None
-                }
-            }
-        });
+                } else {
+                    let target_port = ports.iter().find(|p| {
+                        let name = out.port_name(p).unwrap_or_default().to_lowercase();
+                        name.contains("fluid") || name.contains("timidity") || name.contains("synth")
+                    }).or(ports.first());
 
-        Self { conn, port_name }
+                    if let Some(port) = target_port {
+                        port_name = out.port_name(port).unwrap_or_else(|_| "Unknown".to_string());
+                        out.connect(port, "tabbit-out").ok()
+                    } else {
+                        None
+                    }
+                }
+            });
+
+            Self { conn, port_name }
+        }
+
+        #[cfg(not(feature = "midi"))]
+        {
+            Self { port_name: "MIDI Disabled (Compile with --features midi)".to_string() }
+        }
     }
 
     pub fn play_notes(&mut self, midi_pitches: &[u8], duration_ms: u64) {
+        #[cfg(feature = "midi")]
         if let Some(ref mut conn) = self.conn {
             for &pitch in midi_pitches {
                 let _ = conn.send(&[0x90, pitch, 0x64]);
@@ -146,6 +155,11 @@ impl MidiPlayer {
             for &pitch in midi_pitches {
                 let _ = conn.send(&[0x80, pitch, 0x64]);
             }
+        }
+
+        #[cfg(not(feature = "midi"))]
+        {
+            let _ = (midi_pitches, duration_ms);
         }
     }
 }

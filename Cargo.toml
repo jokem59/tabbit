@@ -14,5 +14,9 @@ itertools = "0.12"
 serde = { version = "1.0", features = ["derive"] }
 toml = "0.8"
 arboard = "=3.3.0"
-midir = "0.9"
+midir = { version = "0.9", optional = true }
 tokio = { version = "1.35", features = ["full"] }
+
+[features]
+default = []
+midi = ["dep:midir"]

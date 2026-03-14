@@ -137,12 +137,6 @@ fn parse_macro_define(input: &str) -> IResult<&str, TabbitCommand> {
     }))
 }
 
-fn parse_comment(input: &str) -> IResult<&str, ()> {
-    let (input, _) = char('#')(input)?;
-    let (input, _) = take_while1(|c| c != '\n')(input)?;
-    Ok((input, ()))
-}
-
 fn parse_bpm(input: &str) -> IResult<&str, TabbitCommand> {
     let (input, _) = tag("BPM")(input)?;
     let (input, _) = space1(input)?;
