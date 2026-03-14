@@ -21,3 +21,8 @@ temp_audio.m4a
 .vscode/
 .idea/
 .DS_Store
+
+
+# Added by cargo
+
+/target
